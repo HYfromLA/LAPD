@@ -19,41 +19,9 @@ function [denoisedCCmatrix,newTh,SKNN,cutoff] = buildCCmatrix(d,n,I,J,W,simplice
 %          newTh: cutoff to remove simplices with large knn distances. 
 %          k2.  
 
-
-%options = struct('SKNN',floor(2*d*log(n))); % Default values for kappa
-
-% Parse name-value pairs
-%for i = 1:2:length(varargin)
-%    if isfield(options, varargin{i})
-%        options.(varargin{i}) = varargin{i+1};
-%    elseif strcmp(varargin{i}, 'K')
-%        K = varargin{i+1}; % Capture 'e' if provided
-%    else
-%        error('Invalid option: %s', varargin{i});
-%    end
-%end
-%SKNN = options.SKNN;
-
 if ~exist("SKNN","var"), SKNN=floor(5*d*log(n)); end
-
-%% Construct CCmatrix. 
-
 [sortedCCmatrix, th] = connectedcomponents(I,J,W,simplices,numscales);
 clear simplices
 [denoisedCCmatrix,newTh,cutoff] = denoise(n,d,I,J,W,sortedCCmatrix,th,denoisingmethod,SKNN);
 clear sortedCCmatrix I J W
-
-%{
-if exist("K","var")
-    [goodclustering,matching,K,labels_S,finalCCmatrix] = clusterscheck(d,denoisedCCmatrix,componentsize,K);  
-    
-    if goodclustering && ~matching         
-        [goodclustering,matching,K_est,labels_S,finalCCmatrix] = clusterscheck(d,denoisedCCmatrix,componentsize);          
-        disp(strcat("User requested ",num2str(K), " clusters but we can only find ",num2str(K_est), " clusters."))
-        K = K_est; 
-    end
-else
-    [goodclustering,matching,K,labels_S,finalCCmatrix] = clusterscheck(d,denoisedCCmatrix,componentsize);  
-end
-%}
 end

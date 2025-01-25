@@ -78,10 +78,9 @@ knndistances = zeros(nn, 1);
         cutoff = input(prompt); rowsTokeep = knndistances < cutoff;
         
         uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
-        length(uniquenodes)
-        sum(rowsTokeep) / length(knndistances)
+        fprintf('Percent of nodes surviving denoising %d \n', length(uniquenodes) / n);
+        fprintf('Percent of simplices surviving denoising %d \n', sum(rowsTokeep) / length(knndistances));
        
-
     elseif strcmp(denoisingmethod, 'automatic_elbow')   
         c = randsample(sortedknndistances,floor(0.10*nn));  % downsample 10% of the knndistances.  
         sc = sort(c);
@@ -91,56 +90,38 @@ knndistances = zeros(nn, 1);
         rowsTokeep = knndistances < cutoff;
         uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
 
-        while length(uniquenodes) < 0.95*n || sum(rowsTokeep) / length(knndistances)  < 0.85 %|| connection < 0.9
+        while (length(uniquenodes) / n) < 0.95 || sum(rowsTokeep) / nn  < 0.85
             
             cutoff = Ths(find(Ths>cutoff,1,'first')); 
             rowsTokeep = knndistances < cutoff; 
             uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
+        end
 
+    elseif strcmp(denoisingmethod, 'automatic_connectedness') 
+        cutoff = Ths(5);
+        rowsTokeep = knndistances < cutoff;
+        uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
+       
+         while  length(uniquenodes)/n < 0.95 || sum(rowsTokeep) / nn  < 0.85
+            cutoff = Ths(find(Ths>cutoff,1,'first'));  
+            rowsTokeep = knndistances < cutoff;
+            uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
+            
             %rowsTokeep1 = rowsTokeep(idx); denoisedGknn = Gknn(rowsTokeep1, rowsTokeep1);         
             %[~,binsizes] = conncomp(graph(denoisedGknn));
             %connection = max(binsizes)/sum(binsizes); 
-        end
-
-        close all;      
-        figure
-        scatter(1:nn, sortedknndistances, 'filled')
-        xlim([0 nn]);
-        title('LAPD to NN', 'FontSize',16)
-        xlabel('Point Index', 'FontSize', 14)
-        yline(cutoff,':','Color','red','LineWidth',2);
-        text(2000, cutoff+0.05, ['cutoff = ' num2str(cutoff)], 'Color', 'red', 'FontSize', 15);
-    
-    elseif strcmp(denoisingmethod, 'automatic_connectedness') 
-        cutoff = Ths(5);
-        rowsTokeep = knndistances < cutoff;  denoisedCCmatrix = sortedCCmatrix(rowsTokeep, :);
-        uniquenodes = unique(denoisedCCmatrix(:,m+1:end));
-        connection = 0; 
-       
-         while  length(uniquenodes) < 0.9*n || connection < 0.9 || sum(rowsTokeep) / length(knndistances)  < 0.55
-            cutoff = Ths(find(Ths>cutoff,1,'first'));  
-            rowsTokeep = knndistances < cutoff;
-            denoisedCCmatrix = sortedCCmatrix(rowsTokeep, :);
-            uniquenodes = unique(denoisedCCmatrix(:,m+1:end)); 
-
-            rowsTokeep1 = rowsTokeep(idx); denoisedGknn = Gknn(rowsTokeep1, rowsTokeep1);         
-            [~,binsizes] = conncomp(graph(denoisedGknn));
-            connection = max(binsizes)/sum(binsizes); 
          end
-
-         rowsTokeep1 = rowsTokeep(idx); denoisedGknn = Gknn(rowsTokeep1, rowsTokeep1);       
-         denoisedCCmatrix = sortedCCmatrix(rowsTokeep, :);
-
-        close all; 
-        figure
-        scatter(1:nn, sortedknndistances, 'filled')
-        xlim([0 nn]);
-        title('LAPD to NN', 'FontSize',16)
-        xlabel('Point Index', 'FontSize', 14)
-        yline(cutoff,':','Color','red','LineWidth',2);
-        text(2000, cutoff+0.05, ['cutoff = ' num2str(cutoff)], 'Color', 'red', 'FontSize', 15);
-
     end
+
+    close all;      
+    figure
+    scatter(1:nn, sortedknndistances, 'filled')
+    xlim([0 nn]);
+    title('LAPD to NN', 'FontSize',16)
+    xlabel('Point Index', 'FontSize', 14)
+    yline(cutoff,':','Color','red','LineWidth',2);
+    text(2000, cutoff+0.05, ['cutoff = ' num2str(cutoff)], 'Color', 'red', 'FontSize', 15);
+    
 
     clear knndistances sortedknndistances
     Gknn = sparse(I, J, W, nn, nn); Gknn = max(Gknn, Gknn');

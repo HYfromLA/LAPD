@@ -1,4 +1,4 @@
-function [I,J,W] = adjacency(X,d,weight,simplices,sharedfaces,posinsim)
+function [I,J,W] = adjacency(X,d,weight,simplices,sharedfaces,posinsim,parallel)
 
 % This function construct the adjacency matrix using the angle distance min(theta, pi-theta). 
 % Inputs:  X: the n * D datastes. 
@@ -12,7 +12,6 @@ function [I,J,W] = adjacency(X,d,weight,simplices,sharedfaces,posinsim)
 %          W: weights of nonzero entries in the adjacency matrix. 
 % Note: the adjacency can be easily built as A = sparse(I, J, W, N, N); A = max(A, A');
 % We don't build it until when it is necessary in order to save memory. 
-parallel = 0; 
 
 nn = size(sharedfaces, 1); 
 
@@ -35,8 +34,7 @@ if parallel
     end
 else
     for i = 1:nn
-        sharednodes = sharedfaces(i, :); vecrows = posinsim{i}; 
-        m=length(vecrows); %max_edgelength = largest_edgelength(vecrows); 
+        sharednodes = sharedfaces(i, :); vecrows = posinsim{i}; m=length(vecrows); 
         block = simplices(vecrows, :); block = block';
         othernodes = setdiff(block, sharednodes,'stable'); uniquenodes = cat(1, sharednodes', othernodes); 
         coords = X(uniquenodes,:); temp = (coords - coords(1,:))'; temp = temp(:, 2:end);

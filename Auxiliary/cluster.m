@@ -1,4 +1,4 @@
-function [n_component, node_labels, latest_scale] = cluster(CCmatrix, m, n, min_percentage, IDXs, n_component)
+function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_percentage,IDXs,n_component)
     % CLUSTER - Perform node clustering based on connected component matrix.
     % Inputs:
     %   CCmatrix - Connected component matrix of size (n, m + d + 1).

@@ -1,4 +1,4 @@
-function [simplices,sharedfaces,posinsim,percentkept] = buildsimplex(X, n, d, IDXs, Dists, filter)
+function [simplices,sharedfaces,posinsim,percentkept] = buildsimplex(X,n,d,IDXs,Dists,parallel,filter)
 
 % This function construct valid simplices. 
 % Inputs:  X: the n * D datastes. 
@@ -11,17 +11,14 @@ function [simplices,sharedfaces,posinsim,percentkept] = buildsimplex(X, n, d, ID
 %          PosInSim: the position of all the simplices in Simplices sharing a particular shared face. 
 %          PercentKept: the percent of simplices surviving the filter. 100% for d=1.  
 
-parallel = 0;
-
 bandwidth = size(IDXs, 2); %filter = 1+0.1*d; %2:1.20;3:1.25;4:   %1.15+0.15*(d-1);
-
 
 if ~exist("filter", "var")
     switch d
         case 2, filter = 1.25; 
-        case 3, filter = 1.33;
-        case 4, filter = 1.41;
-        case 5, filter = 1.49;
+        case 3, filter = 1.30;
+        case 4, filter = 1.35;
+        case 5, filter = 1.40;
     end
 end
 
@@ -45,6 +42,7 @@ else
             quality = max(edgesnorms, [], 2) ./ min(edgesnorms, [], 2); 
             goodquality = quality <= filter; simplices{i} = simplicestemp(goodquality, :); 
         end
+        clear nodes node1edgesnorms simplicestemp node1s node2s thirdedgesnorms edgesnorms
     else
         for i = 1:n
             NNs = IDXs(i,:); DDs = Dists(i,:);
@@ -87,8 +85,14 @@ MoreThanOneAppearance = groups(save, :);
 clear groups
 shared = shared(ia,:); sharedfaces = shared(MoreThanOneAppearance(:,1), :);
 
+if parallel 
+parfor i = 1:size(MoreThanOneAppearance, 1)
+    posinsim{i} = sort(positions(MoreThanOneAppearance(i, 1):MoreThanOneAppearance(i, 2)));
+end
+else
 for i = 1:size(MoreThanOneAppearance, 1)
     posinsim{i} = sort(positions(MoreThanOneAppearance(i, 1):MoreThanOneAppearance(i, 2)));
+end  
 end
 
 end
