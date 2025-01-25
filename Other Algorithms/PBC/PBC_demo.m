@@ -246,10 +246,10 @@ end
 
 %DS:225,100,45; OR:90,140,50; TC:500,150,50; RC:50,150,50; TS:85,300,30; TT:200,100,45; TP:275,100,45 SR: 3S:450,100,45; 4S:750,150,45; 5S:750,150,50;
 
-load("USPS.mat")
-classid = ismember(labelsGT,[0:6,8:9] ); % Pick subset of all the classes. 
+load("mnist-full.mat")
+classid = ismember(labelsGT,[0:6]); % Pick subset of all the classes. 
 X=X(classid,:); labelsGT=labelsGT(classid,:);  
-[labels, ~,time] = Path_Based_Clustering(X,1300,300,80,9); 
+[labels, ~,time] = Path_Based_Clustering(X,4000,100,30,7); 
 OA = accuracy(labels, labelsGT); 
 [OA time]
 
@@ -265,11 +265,11 @@ OA = accuracy(labels, labelsGT);
 %[0:9] 11500,100,30 .358
 
 % mnist_full
-%[0:6] 7500,100,30 .452
-%[0:8] 9500,100,30 .376
-%[0:9] 9500,100,30 .376
+%[0:6] 1100,100,30 .2588
+%[0:8] ?,?,? ?
+%[0:9] ?,?,? ?
 
 % USPS
 %[0:5] 1300,100,80 .440
-%[0:6,8:9] 
-%[0:9] 
+%[0:6,8:9] 100,100,80 .424
+%[0:9] 700,100,80, .378
