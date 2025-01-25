@@ -29,7 +29,7 @@ if parallel
         cumsum = linspace(0, (m-1)*m, m); repcumsum = repelem(cumsum, (m-1):-1:0)'; 
         saverep2 = lower+repcumsum; V2 = V2(saverep2,:);
         thetas = real(acos(dot(V1,V2,2))); Thetas{i} = thetas; 
-        rows = repelem(VecRows(1:(m-1)), (m-1):-1:1, 1);
+        rows = repelem(vecrows(1:(m-1)), (m-1):-1:1, 1);
         I{i} = rows; J{i} = cols; 
     end
 else
