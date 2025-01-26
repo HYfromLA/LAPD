@@ -46,10 +46,10 @@ if exist("LAPDopts",'var')
 end
 
 %% Setting default values to some parameters. 
-if ~exist('weight', 'var'),            weight = "one sided"; end
+if ~exist('weight', 'var'),            if d==1 || d==2, weight = "one sided"; else, weight = "two sided"; end; end
 if ~exist('denoisingmethod', 'var'),   denoisingmethod = 'automatic_elbow'; end %'automatic_connectedness', 'automatic_elbow', 'examinefigure'
 if ~exist('componentsize', 'var'),     componentsize = 0.01; end
-if ~exist('parallel', 'var'),          parallel = 1; end
+if ~exist('parallel', 'var'),          parallel = 0; end
 if parallel, parpool; end
 tic; 
 
@@ -69,7 +69,7 @@ elseif exist('d','var') && ~exist('tau','var')
 end
 
 if ~exist('epsilon','var') 
-    epsilon = 2.5*d^(0.5)*tau; 
+    epsilon = 2.5*sqrt(d)*tau; 
     epsilon_L = mean(Dists(:,max(21, floor(log(n))))); 
     samples = X(randsample(1:n,min(250,n)),:); epsilon_U = max(0.25*max(pdist(samples)),epsilon_L); 
     epsilon = min(max(epsilon, epsilon_L), epsilon_U); 

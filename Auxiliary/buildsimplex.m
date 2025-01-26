@@ -15,10 +15,10 @@ bandwidth = size(IDXs, 2); %filter = 1+0.1*d; %2:1.20;3:1.25;4:   %1.15+0.15*(d-
 
 if ~exist("filter", "var")
     switch d
-        case 2, filter = 1.25; 
-        case 3, filter = 1.30;
-        case 4, filter = 1.35;
-        case 5, filter = 1.40;
+        case 2, filter = 1.25;  %1.25
+        case 3, filter = 1.35;  %1.30
+        case 4, filter = 1.45;  %1.40
+        case 5, filter = 1.55;  %
     end
 end
 

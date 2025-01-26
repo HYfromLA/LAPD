@@ -47,7 +47,6 @@ else
         saverep2 = lower+repcumsum; V2 = V2(saverep2,:);
         thetas = real(acos(dot(V1,V2,2))); Thetas{i} = thetas; 
         rows = repelem(vecrows(1:(m-1)), (m-1):-1:1, 1); cols = vecrows(lower); 
-
         I{i} = rows; J{i} = cols; 
     end
 end
