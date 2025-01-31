@@ -41,13 +41,49 @@ function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_per
     end
 
     % Estimate n_component if not provided
+    %if ~exist("n_component", "var")
+    %    max_count = max(cellfun(@length, values(label_to_columns)));
+    %    candidates = cell2mat(keys(label_to_columns));
+    %    candidates = candidates(cellfun(@length, values(label_to_columns)) == max_count);
+    %    n_component = min(candidates);
+    %    fprintf('Estimated n_component: %d\n', n_component);
+    %end
+
     if ~exist("n_component", "var")
-        max_count = max(cellfun(@length, values(label_to_columns)));
-        candidates = cell2mat(keys(label_to_columns));
-        candidates = candidates(cellfun(@length, values(label_to_columns)) == max_count);
-        n_component = min(candidates);
-        fprintf('Estimated n_component: %d\n', n_component);
+    % Get all unique cluster sizes and their counts
+    cluster_sizes = cell2mat(keys(label_to_columns));
+    cluster_counts = cellfun(@length, values(label_to_columns));
+   
+    % Find the cluster size with the maximum count
+    valid_indices = cluster_sizes > 1; 
+    valid_sizes = cluster_sizes(valid_indices); 
+    %valid_sizes
+    valid_counts = cluster_counts(valid_indices); 
+    %valid_counts
+
+    if isempty(valid_sizes)
+        error('No valid cluster size greater than 1.')
     end
+
+    max_count = max(valid_counts);
+    max_count_candidates = valid_sizes(valid_counts == max_count);
+   
+    % Choose the smallest cluster size among those with max count
+    n_component = min(max_count_candidates);
+   
+    % If the chosen n_component is 1, find the smallest size > 1
+    if n_component == 1
+        valid_candidates = cluster_sizes(cluster_sizes > 1);
+        if ~isempty(valid_candidates)
+            n_component = min(valid_candidates);
+        else
+            error('No valid cluster size greater than 1 found.');
+        end
+    end
+   
+    fprintf('Estimated n_component: %d\n', n_component);
+    end
+
 
     % Match or adjust n_component
     if isKey(label_to_columns, n_component)
