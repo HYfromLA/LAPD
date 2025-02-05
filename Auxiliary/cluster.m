@@ -57,9 +57,9 @@ function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_per
     % Find the cluster size with the maximum count
     valid_indices = cluster_sizes > 1; 
     valid_sizes = cluster_sizes(valid_indices); 
-    %valid_sizes
+    valid_sizes
     valid_counts = cluster_counts(valid_indices); 
-    %valid_counts
+    valid_counts
 
     if isempty(valid_sizes)
         error('No valid cluster size greater than 1.')

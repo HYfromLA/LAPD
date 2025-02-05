@@ -69,14 +69,14 @@ elseif exist('d','var') && ~exist('tau','var')
 end
 
 if ~exist('epsilon','var') 
-    epsilon = 2.5*sqrt(d)*tau; 
+    epsilon = 2.7*tau; 
     epsilon_L = mean(Dists(:,max(21, floor(log(n))))); 
     samples = X(randsample(1:n,min(250,n)),:); epsilon_U = max(0.25*max(pdist(samples)),epsilon_L); 
     epsilon = min(max(epsilon, epsilon_L), epsilon_U); 
     clear samples 
 end
 
-if ~exist('bandwidth','var'), bandwidth = 20+5*(d-1); end
+if ~exist('bandwidth','var'), bandwidth = 25; end
 if ~exist('numscales','var'), numscales = 100; end 
 
 %% Building epsilon graph for each data point. 
