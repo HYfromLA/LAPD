@@ -240,7 +240,7 @@ X=X(classid,:); labelsGT=labelsGT(classid,:);
 [missrate,labels, ~,time] = SSC(X',0,false,5,false,1,new_labels); 
 accuracy(labels, labelsGT)
 
-%[0:5] 5,1 [0:6,8:9] 5,1 [0:9] 
+%[0:5] 5,1 [0:6,8:9] 5,1 [0:9] 5,1
 
 load("mnist_test.mat")
 classid = ismember(labelsGT,[0:8]); % Pick subset of all the classes. 
