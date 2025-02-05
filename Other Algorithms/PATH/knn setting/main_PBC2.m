@@ -1,7 +1,8 @@
-function [A,idx1]=main_PBC2(X,k,k1,r,alpha,s)
+function [A,idx1,time]=main_PBC2(X,k,k1,r,alpha,s)
 %
 %
 %
+tic;
 [n,~] = size(X);
 
 [nearnodes,Distance]=knnsearch(X,X,'K',k+1,'Distance','euclidean');
@@ -25,6 +26,7 @@ end
 idx =spectral_clustering(A,s);
 idx1=kmeans(idx,s);
 %gscatter(X(:,1),X(:,2),idx);
-beep
+%beep
+time=toc-tic;
 
 end
