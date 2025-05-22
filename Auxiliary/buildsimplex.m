@@ -11,16 +11,9 @@ function [simplices,sharedfaces,posinsim,percentkept] = buildsimplex(X,n,d,IDXs,
 %          PosInSim: the position of all the simplices in Simplices sharing a particular shared face. 
 %          PercentKept: the percent of simplices surviving the filter. 100% for d=1.  
 
-bandwidth = size(IDXs, 2); %filter = 1+0.1*d; %2:1.20;3:1.25;4:   %1.15+0.15*(d-1);
+bandwidth = size(IDXs, 2);
 
-if ~exist("filter", "var")
-    switch d
-        case 2, filter = 1.25; 
-        case 3, filter = 1.40; 
-        case 4, filter = 1.55; 
-        case 5, filter = 1.70; 
-    end
-end
+if ~exist("filter", "var"), filter = 1.25+0.15*(d-2); end
 
 if d == 1
     IDXs = IDXs'; simplices = IDXs(:); sharedfaces = (1:n)'; 

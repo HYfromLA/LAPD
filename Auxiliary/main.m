@@ -46,15 +46,14 @@ if exist("LAPDopts",'var')
 end
 
 %% Setting default values to some parameters. 
-if ~exist('weight', 'var'),            if d==1 || d==2, weight = "one sided"; else, weight = "two sided"; end; end
-if ~exist('denoisingmethod', 'var'),   denoisingmethod = 'automatic_elbow'; end %'automatic_connectedness', 'automatic_elbow', 'examinefigure'
+if ~exist('weight', 'var'),            weight = "one sided"; end
+if ~exist('denoisingmethod', 'var'),   denoisingmethod = 'automatic'; end %'automatic_elbow', 'examinefigure'
 if ~exist('componentsize', 'var'),     componentsize = 0.01; end
 if ~exist('parallel', 'var'),          parallel = 0; end
 if parallel, parpool; end
 tic; 
 
 %% Estimating d, tau, and computing default epsilon. 
-[n, ~] = size(X); [IDXs,Dists] = knnsearch(X,X,'K',floor(0.5*n));
 
 if ~exist('d','var') && ~exist('tau','var') 
     [d,tau] = MSVD(X,parallel); 
@@ -63,21 +62,23 @@ if ~exist('d','var') && ~exist('tau','var')
 elseif ~exist('d','var') && exist('tau','var') 
     [d,~] = MSVD(X,parallel); 
     fprintf('The intrinsic dimension found = %d \n', d);
-elseif exist('d','var') && ~exist('tau','var') 
+elseif exist('d','var') && ~exist('tau','var') && ~exist('epsilon','var')
     [~,tau] = MSVD(X,parallel); 
     fprintf('The noise level found = %.5f. \n', tau);
 end
 
+[n, ~] = size(X); [IDXs,Dists] = knnsearch(X,X,'K',floor(0.1*n));
+
 if ~exist('epsilon','var') 
-    epsilon = 2.7*tau; 
-    epsilon_L = mean(Dists(:,max(21, floor(log(n))))); 
+    epsilon = sqrt(2)*tau;
+    epsilon_L = prctile(Dists(:,ceil(2.5*log(n))), 90);
     samples = X(randsample(1:n,min(250,n)),:); epsilon_U = max(0.25*max(pdist(samples)),epsilon_L); 
     epsilon = min(max(epsilon, epsilon_L), epsilon_U); 
     clear samples 
 end
 
-if ~exist('bandwidth','var'), bandwidth = 25; end
-if ~exist('numscales','var'), numscales = 100; end 
+if ~exist('bandwidth','var'), bandwidth = 25 ; end
+if ~exist('numscales','var'), numscales = 50; end 
 
 %% Building epsilon graph for each data point. 
 [~, k1s]=max(Dists > epsilon, [], 2); k2s = k1s + bandwidth - 1;
@@ -101,12 +102,14 @@ clear newIDXs newDists
 clear X sharedfaces posinsim
 
 %% Constructing CCmatrix. 
-if exist("SKNN","var")
-    [denoisedCCmatrix,newTh,SKNN,cutoff] = buildCCmatrix(d,n,I,J,W,simplices,numscales,denoisingmethod,SKNN); 
-else
-    [denoisedCCmatrix,newTh,SKNN,cutoff] = buildCCmatrix(d,n,I,J,W,simplices,numscales,denoisingmethod); 
-end
-clear I J W simplices 
+if ~exist("SKNN","var"), SKNN=floor(10*log(n)); end
+[sortedCCmatrix, th] = connectedcomponents(I,J,W,simplices,numscales);
+clear simplices
+[denoisedsimplices, rowsTokeep, cutoff] = denoise(n,d,sortedCCmatrix,th,denoisingmethod,SKNN);
+clear sortedCCmatrix th
+[I, J, W] = filter_edge_list(I, J, W, rowsTokeep);
+[denoisedCCmatrix, th] = connectedcomponents(I,J,W,denoisedsimplices,numscales);
+clear I J W
 
 %% Cluster
 if exist("K","var")
@@ -116,10 +119,8 @@ else
 end
 clear IDXs
 
-misc.numsimplices = nn; misc.epsilon = epsilon; misc.k1s = k1s; 
+misc.numsimplices = nn; misc.epsilon = epsilon; misc.k1s = k1s; misc.th = th;
 misc.percentkept = percentkept; misc.SKNN = SKNN; misc.denoisingcutoff = cutoff;
-%misc.WLAPDs = WLAPDs; misc.WLAPD = WLAPD; 
-%misc.BLAPDs = BLAPDs; misc.BLAPD = BLAPD; 
 
 time = toc; 
 if parallel, delete(gcp); end

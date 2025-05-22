@@ -1,4 +1,4 @@
-function [denoisedCCmatrix,newTh,cutoff] = denoise(n,d,I,J,W,sortedCCmatrix,th,denoisingmethod,SKNN)
+function [denoisedsimplices,rowsTokeep,cutoff] = denoise(n,d,sortedCCmatrix,th,denoisingmethod,SKNN)
 
 % This function removes simplices whose LAPD to its SKNN-th nearest neighbors are large (beyond cutoff). 
 % Inputs:  d: intrinsic dimension of manifolds. 
@@ -64,7 +64,7 @@ knndistances = zeros(nn, 1);
     
     [~, idx] = unique(sortedCCmatrix(:,m+1:end), "rows");
     uniqueDDs = unique(knndistances); Ths = 1.0001*uniqueDDs; 
-    sortedknndistances = sort(knndistances);
+    sortedknndistances = sort(knndistances); 
     
     if strcmp(denoisingmethod, 'examinefigure')
         close all; 
@@ -81,56 +81,42 @@ knndistances = zeros(nn, 1);
         fprintf('Percent of nodes surviving denoising %d \n', length(uniquenodes) / n);
         fprintf('Percent of simplices surviving denoising %d \n', sum(rowsTokeep) / length(knndistances));
        
-    elseif strcmp(denoisingmethod, 'automatic_elbow')   
-        c = randsample(sortedknndistances,floor(0.10*nn));  % downsample 10% of the knndistances.  
+    elseif strcmp(denoisingmethod, 'automatic')
+
+        c = randsample(sortedknndistances(floor(nn*0.25):end),floor(0.10*nn));  % downsample 10% of the knndistances.  
         sc = sort(c);
         idxx = knee_pt(sc);
-        cutoff = sc(idxx)*1.0001; 
-
+        cutoff = sc(idxx)*1.01;
+        
         rowsTokeep = knndistances < cutoff;
         uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
+        valid_num_knns = sum(knndistances < 5);
+        if valid_num_knns/length(knndistances) < 0.85
+            warning("%.2f%% of simplices has infinity distance to their %d-th neighbor; Graph connection is bad. \n Please relax the filter and re-run.", valid_num_knns/length(knndistances)*100, SKNN);
+        end
 
-        while (length(uniquenodes) / n) < 0.95 || sum(rowsTokeep) / nn  < 0.85
+        while (length(uniquenodes) / n) < 0.95 || sum(rowsTokeep) / valid_num_knns  < 0.85 % valid_num_knns
             
             cutoff = Ths(find(Ths>cutoff,1,'first')); 
             rowsTokeep = knndistances < cutoff; 
             uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
         end
-
-    elseif strcmp(denoisingmethod, 'automatic_connectedness') 
-        cutoff = Ths(5);
-        rowsTokeep = knndistances < cutoff;
-        uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
-       
-         while  length(uniquenodes)/n < 0.95 || sum(rowsTokeep) / nn  < 0.85
-            cutoff = Ths(find(Ths>cutoff,1,'first'));  
-            rowsTokeep = knndistances < cutoff;
-            uniquenodes = unique(sortedCCmatrix(rowsTokeep,m+1:end)); 
-            
-            %rowsTokeep1 = rowsTokeep(idx); denoisedGknn = Gknn(rowsTokeep1, rowsTokeep1);         
-            %[~,binsizes] = conncomp(graph(denoisedGknn));
-            %connection = max(binsizes)/sum(binsizes); 
-         end
+    else
+        error("Unknown denoising method.")
     end
 
+    sortedknndistances = sortedknndistances(sortedknndistances < 1.8);
     close all;      
     figure
-    scatter(1:nn, sortedknndistances, 'filled')
-    xlim([0 nn]);
+    scatter(1:length(sortedknndistances), sortedknndistances, 'filled')
+    xlim([0 length(sortedknndistances)]);
     title('LAPD to NN', 'FontSize',16)
     xlabel('Point Index', 'FontSize', 14)
     yline(cutoff,':','Color','red','LineWidth',2);
     text(2000, cutoff+0.05, ['cutoff = ' num2str(cutoff)], 'Color', 'red', 'FontSize', 15);
     
-
     clear knndistances sortedknndistances
-    Gknn = sparse(I, J, W, nn, nn); Gknn = max(Gknn, Gknn');
-    rowsTokeep1 = rowsTokeep(idx); denoisedGknn = Gknn(rowsTokeep1, rowsTokeep1);   
-    clear Gknn rowsTokeep1
-    [I,J,W] = find(denoisedGknn); 
-    clear denoisedGknn 
     denoisedsimplices = unique(sortedCCmatrix(rowsTokeep,(m+1):end), 'rows');
-    clear sortedCCmatrix rowsTokeep
-    
-    [denoisedCCmatrix, newTh] = connectedcomponents(I,J,W,denoisedsimplices,m);
+    clear sortedCCmatrix
+    rowsTokeep = rowsTokeep(idx);
 end

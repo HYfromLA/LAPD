@@ -13,7 +13,6 @@ function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_per
 
     % Extract scales and simplices
     scales = CCmatrix(:, 1:m);
-    simplices = CCmatrix(:, m+1:end);
 
     label_counts_per_scale = zeros(m, 1);
     label_to_columns = containers.Map('KeyType', 'double', 'ValueType', 'any');
@@ -39,15 +38,6 @@ function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_per
             label_to_columns(num_valid_labels) = [current_columns, scale];
         end
     end
-
-    % Estimate n_component if not provided
-    %if ~exist("n_component", "var")
-    %    max_count = max(cellfun(@length, values(label_to_columns)));
-    %    candidates = cell2mat(keys(label_to_columns));
-    %    candidates = candidates(cellfun(@length, values(label_to_columns)) == max_count);
-    %    n_component = min(candidates);
-    %    fprintf('Estimated n_component: %d\n', n_component);
-    %end
 
     if ~exist("n_component", "var")
     % Get all unique cluster sizes and their counts

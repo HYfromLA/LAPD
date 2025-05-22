@@ -25,7 +25,7 @@ function accuracy = accuracy(true_labels, predicted_labels)
     accuracy = matched_counts / length(true_labels);
 
     % Display the accuracy
-    disp(['Optimal Accuracy: ', num2str(accuracy)]);
+    % disp(['Optimal Accuracy: ', num2str(accuracy)]);
 end
 
 
