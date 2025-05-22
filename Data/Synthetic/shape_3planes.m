@@ -4,7 +4,7 @@ n = DATAopts.number;
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
 rotation = DATAopts.angles;
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 
@@ -27,9 +27,14 @@ for j = 1:length(n)
   %thisData(:,1:d) = -0.5 + rand([n(j) 2]);
    
   if j==3
-      thisData(:,1:d) = 1.25*(-0.5 + rand([n(j) 2]));
+      temp = -0.5 + rand([n(j) 2]); temp(:,1) = 1.5*temp(:,1);
+      thisData(:,1:d) = temp; %1.5*(-0.5 + rand([n(j) 2]));
+  elseif j == 1
+      temp = -0.5 + rand([n(j) 2]); temp(:,1) = 1.25*temp(:,1);
+      thisData(:,1:d) = temp; %-0.5 + rand([n(j) 2]);
   else
-      thisData(:,1:d) = -0.5 + rand([n(j) 2]);
+      temp = -0.5 + rand([n(j) 2]); temp(:,1) = 1.25*temp(:,1);
+      thisData(:,1:d) = temp; %-0.5 + rand([n(j) 2]);
   end
 
   % Pollute standardized data with noise
@@ -47,13 +52,13 @@ for j = 1:length(n)
 
   % Re-locate plane 2 and 3. 
   if j==2 
-      thisData(:,1) = thisData(:,1) -0.175;  %-0.175;
-      thisData(:,3) = thisData(:,3) +0.205;  %+0.205;
+      thisData(:,1) = thisData(:,1) -0.300;  %-0.175;
+      thisData(:,3) = thisData(:,3) +0.250;  %+0.205;
   end
 
   if j==3 
-      thisData(:,1) = thisData(:,1) + 0.070; %+0.055
-      thisData(:,3) = thisData(:,3) + 0.150; %+0.150
+      thisData(:,1) = thisData(:,1) + 0.100; %+0.055
+      thisData(:,3) = thisData(:,3) + 0.180; %+0.150
   end
 
   % Place data in right locations in output.
@@ -61,5 +66,7 @@ for j = 1:length(n)
   row2 = sum(n(1:j));
   data(row1:row2,:) = thisData;
   labels(row1:row2) = j;
+
+  plot3(data(:,1),data(:,2),data(:,3),'.')
 
 end

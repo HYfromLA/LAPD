@@ -3,7 +3,7 @@ function[data,labels] = shape_2fivespheres(DATAopts)
 n = DATAopts.number; 
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 
@@ -16,7 +16,7 @@ labels = zeros([sum(n) 1]);
 for j = 1:length(n)
 
   % Generate noiseless, standardized data
-  thisData = randn(n(j), d+1); %zeros([n(j) D]);
+  thisData = randn(n(j), d+1); 
   thisData = thisData ./ vecnorm(thisData,2,2);
   if j>1
     thisData(:,2:d) = thisData(:,2:d) + 1.5/sqrt(d-1);

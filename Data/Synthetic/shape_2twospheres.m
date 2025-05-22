@@ -1,9 +1,9 @@
-function[data,labels] = shape_2spheres(DATAopts)
+function[data,labels] = shape_2twospheres(DATAopts)
 
 n = DATAopts.number; 
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 

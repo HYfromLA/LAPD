@@ -4,7 +4,7 @@ n = DATAopts.number;
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
 rotation = DATAopts.angles;
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 

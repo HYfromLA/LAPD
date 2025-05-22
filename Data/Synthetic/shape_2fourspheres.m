@@ -3,7 +3,7 @@ function[data,labels] = shape_2fourspheres(DATAopts)
 n = DATAopts.number; 
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 
@@ -19,8 +19,7 @@ for j = 1:length(n)
   thisData = randn(n(j), d+1); %zeros([n(j) D]);
   thisData = thisData ./ vecnorm(thisData,2,2);
   if j>1
-    %thisData(:,2:d) = thisData(:,2:d) + 1.5/sqrt(d-1);
-    thisData(:,2) = thisData(:,2) + 1.5;
+    thisData(:,2:d) = thisData(:,2:d) + 1.5/sqrt(d-1);
   end
   thisData(:,d+2:D) = zeros(n(j),D-d-1); 
 

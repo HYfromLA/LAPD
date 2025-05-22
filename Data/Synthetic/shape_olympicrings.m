@@ -3,7 +3,7 @@ function[data,labels] = shape_olympicrings(DATAopts)
 n = DATAopts.number; 
 D = DATAopts.ambdim; 
 d = DATAopts.intrdim; 
-tau = DATAopts.noise_level; 
+tau = DATAopts.sigma; 
 rng_seed = DATAopts.rngSeed; 
 noise_type = DATAopts.noise_type; 
 
@@ -38,7 +38,7 @@ for j = 1:length(n)
     case 'gaussian'
       thisData = thisData + normrnd(0,tau/sqrt(D-d),size(thisData));    %noise_stdev/sqrt(D-d)*randn(size(thisData));
     case 'uniform'
-      thisData = thisData + sqrt(3)*tau/sqrt(D-d)*(2*rand(size(thisData))-1);
+      thisData = thisData + 2*tau/sqrt(D-d)*(2*rand(size(thisData))-1);
     otherwise
       error("Unknown noise type")
   end

@@ -40,6 +40,10 @@ if strcmp(DATAopts.shape, 'three planes')
     [Data, LabelsGT] = shape_3planes(DATAopts);    
 end
 
+if strcmp(DATAopts.shape, 'cone plane') 
+    [Data, LabelsGT] = shape_coneplane(DATAopts);    
+end
+
 if strcmp(DATAopts.shape, 'swiss roll')  
     [Data, LabelsGT] = shape_swissroll(DATAopts);    
 end
