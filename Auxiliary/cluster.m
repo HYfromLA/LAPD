@@ -1,4 +1,4 @@
-function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_percentage,IDXs,n_component)
+function [n_component, node_labels] = cluster(CCmatrix,m,n,min_percentage,IDXs,n_component)
     % CLUSTER - Perform node clustering based on connected component matrix.
     % Inputs:
     %   CCmatrix - Connected component matrix of size (n, m + d + 1).
@@ -156,7 +156,7 @@ function [n_component, node_labels, latest_scale] = cluster(CCmatrix,m,n,min_per
 
         for i = 1:length(removednodes)
             NNs = IDXs(removednodes(i), :); labeledneighbors = []; j = 0; 
-            while length(labeledneighbors) < 11 && j<500
+            while length(labeledneighbors) < 11 && j<min(500, size(NNs,2))
                 j=j+1; 
                 if node_labels(NNs(j)) > 0
                     labeledneighbors = [labeledneighbors; NNs(j)];

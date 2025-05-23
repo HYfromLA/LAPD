@@ -35,6 +35,7 @@ if exist("LAPDopts",'var')
     if isfield(LAPDopts, 'K'),                K = LAPDopts.K; end
     if isfield(LAPDopts, 'weight'),           weight = LAPDopts.weight; end
     if isfield(LAPDopts, 'noise_level'),      tau = LAPDopts.noise_level; end
+    if isfield(LAPDopts, 'knnnumber'),        knnnumber = LAPDopts.knnnumber; end
     if isfield(LAPDopts, 'epsilon'),          epsilon = LAPDopts.epsilon; end 
     if isfield(LAPDopts, 'bandwidth'),        bandwidth = LAPDopts.bandwidth; end 
     if isfield(LAPDopts, 'filter'),           filter = LAPDopts.filter; end 
@@ -50,6 +51,7 @@ if ~exist('weight', 'var'),            weight = "one sided"; end
 if ~exist('denoisingmethod', 'var'),   denoisingmethod = 'automatic'; end %'automatic_elbow', 'examinefigure'
 if ~exist('componentsize', 'var'),     componentsize = 0.01; end
 if ~exist('parallel', 'var'),          parallel = 0; end
+if ~exist('knnnumber', 'var'),         knnnumber = floor(0.1*size(X,1)); end
 if parallel, parpool; end
 tic; 
 
@@ -67,7 +69,7 @@ elseif exist('d','var') && ~exist('tau','var') && ~exist('epsilon','var')
     fprintf('The noise level found = %.5f. \n', tau);
 end
 
-[n, ~] = size(X); [IDXs,Dists] = knnsearch(X,X,'K',floor(0.1*n));
+[n, ~] = size(X); [IDXs,Dists] = knnsearch(X,X,'K',knnnumber);
 
 if ~exist('epsilon','var') 
     epsilon = sqrt(2)*tau;
@@ -113,9 +115,9 @@ clear I J W
 
 %% Cluster
 if exist("K","var")
-    [k_hat,labels,latest_scale] = cluster(denoisedCCmatrix,numscales,n,componentsize,IDXs,K);
+    [k_hat,labels] = cluster(denoisedCCmatrix,numscales,n,componentsize,IDXs,K);
 else
-    [k_hat,labels,latest_scale] = cluster(denoisedCCmatrix,numscales,n,componentsize,IDXs);
+    [k_hat,labels] = cluster(denoisedCCmatrix,numscales,n,componentsize,IDXs);
 end
 clear IDXs
 
