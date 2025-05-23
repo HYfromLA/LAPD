@@ -1,3 +1,5 @@
+addpath(genpath(pwd));
+
 %% COIL20. 
 clear
 close all
@@ -38,7 +40,7 @@ OA = accuracy(labels, labelsGT);
 clear
 close all
 load("mnist_test.mat")
-classid = ismember(labelsGT,[0:7]); % Pick subset of all the classes. 
+classid = ismember(labelsGT,[0:9]); % Pick subset of all the classes. 
 X=X(classid,:); labelsGT=labelsGT(classid,:);
 LAPDopts.intrdim = 2; LAPDopts.K = length(unique(labelsGT));
 LAPDopts.epsilon = 0; %LAPDopts.denoisingmethod = "examinefigure";
@@ -57,12 +59,13 @@ load("mnist_full.mat")
 classid = ismember(labelsGT,[0:6]); % Pick subset of all the classes. 
 X=X(classid,:); labelsGT=labelsGT(classid,:);
 LAPDopts.intrdim = 2; LAPDopts.K = length(unique(labelsGT));
-%LAPDopts.filter = 1.2; 
-LAPDopts.epsilon = 0;
-%LAPDopts.denoisingmethod = 'examinefigure'; 
-LAPDopts.bandwidth = 16; LAPDopts.weight = "two sided";  
+%LAPDopts.filter = 1.20; LAPDopts.numscales = 100; 
+LAPDopts.epsilon = 0; %LAPDopts.denoisingmethod = 'examinefigure'; 
+LAPDopts.bandwidth = 11; LAPDopts.weight = "two sided"; LAPDopts.knnnumber = 30;
 [intrinsicDim,epsilon,k_hat,labels,time,misc] = main(X,LAPDopts);
 OA= accuracy(labels, labelsGT);
 
-%[0:6] bandwidth = 15, denoising=default: 96.67%
-%[0:8] bandwidth = 15, filter=1.2, denoising=1.2, SKNN=default: .957
+%[0:6] bandwidth = 10, denoising=default: 93.87%   551.83
+%[0:6,8] bandwidth = 10, 95.59%  669.88
+%[0:8] bandwidth = 15,  filter=1.2, denoising=1.2, numscales=100 : .950
+%[0:9] bandwidth = 15, filter=1.2, denoising=1.2, SKNN=default: .859
