@@ -61,7 +61,7 @@ X=X(classid,:); labelsGT=labelsGT(classid,:);
 LAPDopts.intrdim = 2; LAPDopts.K = length(unique(labelsGT));
 %LAPDopts.filter = 1.20; LAPDopts.numscales = 100; 
 LAPDopts.epsilon = 0; %LAPDopts.denoisingmethod = 'examinefigure'; 
-LAPDopts.bandwidth = 11; LAPDopts.weight = "two sided"; LAPDopts.knnnumber = 30;
+LAPDopts.bandwidth = 12; LAPDopts.weight = "two sided"; LAPDopts.knnnumber = 30;
 [intrinsicDim,epsilon,k_hat,labels,time,misc] = main(X,LAPDopts);
 OA= accuracy(labels, labelsGT);
 
