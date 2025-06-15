@@ -17,7 +17,7 @@ OA = accuracy(labels,labelsGT);
 %[1:20] bandwidth = 22, denoising=1: 90.42%
 
 %[1:7,9:18,20] bandwidth = 20, denoising=default: 96.37%
-%[1:18,20] bandwidth = 20, denoising=default: 91.30%
+%[1:18,20] bandwidth = 12, denoising=default: 92.25%
 %[1:20] bandwidth = 22, denoising=default: 90.28%
 
 %% USPS.
@@ -50,7 +50,7 @@ OA= accuracy(labels, labelsGT);
 
 %[0:7] bandwidth = 14, denoising=default, SKNN=default: 96.13%
 %[0:8] bandwidth = 14, denoising=default, SKNN=default: 94.32%
-%[0:9] bandwidth = 14, denoising=default, SKNN=default: 80.98%
+%[0:9] bandwidth = 14, denoising=default, SKNN=default: 79.51%
 
 %% MNIST-full. 
 clear
@@ -59,13 +59,11 @@ load("mnist_full.mat")
 classid = ismember(labelsGT,[0:6]); % Pick subset of all the classes. 
 X=X(classid,:); labelsGT=labelsGT(classid,:);
 LAPDopts.intrdim = 2; LAPDopts.K = length(unique(labelsGT));
-%LAPDopts.filter = 1.20; LAPDopts.numscales = 100; 
-LAPDopts.epsilon = 0; %LAPDopts.denoisingmethod = 'examinefigure'; 
-LAPDopts.bandwidth = 12; LAPDopts.weight = "two sided"; LAPDopts.knnnumber = 30;
+LAPDopts.filter = 1.20;LAPDopts.epsilon = 0; %LAPDopts.denoisingmethod = 'examinefigure'; 
+LAPDopts.bandwidth = 15; LAPDopts.weight = "two sided"; %LAPDopts.knnnumber = 30;
 [intrinsicDim,epsilon,k_hat,labels,time,misc] = main(X,LAPDopts);
 OA= accuracy(labels, labelsGT);
 
-%[0:6] bandwidth = 10, denoising=default: 93.87%   551.83
-%[0:6,8] bandwidth = 10, 95.59%  669.88
-%[0:8] bandwidth = 15,  filter=1.2, denoising=1.2, numscales=100 : .950
-%[0:9] bandwidth = 15, filter=1.2, denoising=1.2, SKNN=default: .859
+%[0:6] bandwidth = 15, filter=1.2, denoising=1.2:  97.45%    
+%[0:8] bandwidth = 15, filter=1.2, denoising=1.2: .950
+%[0:9] bandwidth = 15, filter=1.2, denoising=1.2: .859
