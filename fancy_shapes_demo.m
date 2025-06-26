@@ -10,6 +10,7 @@ clear
 close all
 addpath(genpath(pwd));
 rng("default")
+seeds = randsample(100, 20);
 
 prompt=['Please choose one fancy shape from below (in string format): \n ' ...
     'dollar sign, olympic rings, three curves, rose circles \n ' ...
@@ -41,7 +42,7 @@ elseif strcmp(DATAopts.shape, "two triangles")
     DATAopts.number = [6000, 6000];  DATAopts.intrdim = 2; 
     DATAopts.angles = [0, pi/10];   
 
-elseif strcmp(DATAopts.shape, "three planes")
+elseif strcmp(DATAopts.shape, "three planes")                         %optimal e = 0.2. 
     DATAopts.number = [2000, 2000, 2000]; DATAopts.intrdim = 2;   
     DATAopts.angles = [0, pi/2, 4*pi/5];  
 
@@ -73,10 +74,6 @@ if strcmp(DATAopts.shape, "swiss roll") || strcmp(DATAopts.shape, "two triangles
 elseif strcmp(DATAopts.shape, "three curves")
     LAPDopts.noise_level = sqrt(3) * DATAopts.sigma; 
 end
-%LAPDopts.epsilon = 0.200;
-
-% Generate random seeds. 
-seeds = randsample(100, 20);
 
 for i = 1:length(seeds)
     if i==1, disp('##########################################'); end
