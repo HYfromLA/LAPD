@@ -80,7 +80,7 @@ if ~exist('epsilon','var')
 end
 
 if ~exist('bandwidth','var'), bandwidth = 25 ; end
-if ~exist('numscales','var'), numscales = 50; end 
+if ~exist('numscales','var'), numscales = 100; end 
 
 %% Building epsilon graph for each data point. 
 [~, k1s]=max(Dists > epsilon, [], 2); k2s = k1s + bandwidth - 1;
