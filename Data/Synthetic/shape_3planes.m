@@ -67,6 +67,6 @@ for j = 1:length(n)
   data(row1:row2,:) = thisData;
   labels(row1:row2) = j;
 
-  plot3(data(:,1),data(:,2),data(:,3),'.')
+  %plot3(data(:,1),data(:,2),data(:,3),'.')
 
 end
