@@ -34,7 +34,7 @@ OA= accuracy(labels, labelsGT);
 
 %[0:7] bandwidth = 14, denoising=default: 96.13%
 %[0:8] bandwidth = 14, denoising=default: 94.32%
-%[0:9] bandwidth = 14, denoising=default: 79.51%    ?????
+%[0:9] bandwidth = 14, denoising=default: 79.51%  
 
 %% MNIST-full. 
 clear

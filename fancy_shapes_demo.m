@@ -29,8 +29,8 @@ elseif strcmp(DATAopts.shape, "olympic rings")
     DATAopts.number = [1200, 1200, 1200, 1200, 1200]; DATAopts.intrdim = 1;  
 
 elseif strcmp(DATAopts.shape, "three curves")
-    DATAopts.number = [5000, 5000, 5000]; DATAopts.intrdim = 1; 
-    DATAopts.angles = [0, pi/3, 2*pi/3];   
+    DATAopts.number = [4000, 4000, 4000]; DATAopts.intrdim = 1; 
+    DATAopts.angles = [0, 2*pi/3, pi/3];   
 
 elseif strcmp(DATAopts.shape, "rose circles")
     DATAopts.number = [3500, 1250, 1250]; DATAopts.intrdim = 1;  
@@ -39,7 +39,7 @@ elseif strcmp(DATAopts.shape, "two 2spheres")
     DATAopts.number = [3000, 3000];  DATAopts.intrdim = 2;  
 
 elseif strcmp(DATAopts.shape, "two triangles")
-    DATAopts.number = [6000, 6000];  DATAopts.intrdim = 2; 
+    DATAopts.number = [5000, 5000];  DATAopts.intrdim = 2; 
     DATAopts.angles = [0, pi/10];   
 
 elseif strcmp(DATAopts.shape, "three planes")                         %optimal e = 0.2. 
@@ -74,6 +74,7 @@ if strcmp(DATAopts.shape, "swiss roll") || strcmp(DATAopts.shape, "two triangles
 elseif strcmp(DATAopts.shape, "three curves")
     LAPDopts.noise_level = sqrt(3) * DATAopts.sigma; 
 end
+%LAPDopts.epsilon = 0.2;
 
 for i = 1:length(seeds)
     if i==1, disp('##########################################'); end
