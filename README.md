@@ -1,1 +1,1 @@
-This is the implementation of our paper Robust Multi-Manifold Clustering via Simplex Paths. 
+This is the implementation of our paper Robust Multi-Manifold Clustering via Simplex Paths. We use the file from https://www.mathworks.com/matlabcentral/fileexchange/35094-knee-point to find the elbow point for the denoising threshold and 
